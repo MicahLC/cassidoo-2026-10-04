@@ -1,0 +1,5 @@
+{
+  "node-option": ["import=tsx", "harmony-temporal"],
+  "spec": ["test/**/*.test.ts"],
+  "extension": ["ts"]
+}
