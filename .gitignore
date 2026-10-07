@@ -16,7 +16,7 @@ pnpm-debug.log*
 
 # Editor/OS folders
 .vs/
-.vscode/
+
 .idea/
 .DS_Store
 Thumbs.db
