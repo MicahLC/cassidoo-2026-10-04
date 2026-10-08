@@ -26,4 +26,4 @@ On Halloween night, a town is represented by a grid where 0 is an empty lot, 1 i
 
 # Solution
 
--
+Once we've established that we have a valid grid, we go through it and find all the zombies already present. Then we iterate and have each zombie turn the humans next to it. These new zombies are added to an array, and at the end of the iteration, we replace the old array of zombies (which have now turned all the humans next to them) with the array of new zombies. As long as an iteration adds zombies, we keep counting up the time. And once no zombies turn anybody, we go through the grid once more to see if there are any humans left. If so, they win! Otherwise, we return the number of iterations where a human was turned into a zombie.
