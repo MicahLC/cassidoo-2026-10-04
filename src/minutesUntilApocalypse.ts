@@ -33,6 +33,7 @@ export function minutesUntilApocalypse(grid: number[][]): number {
   // now each zombie transforms any humans next to it
   let zombieAdded = false, time = 0;
   do {
+    zombieAdded = false;
     let newZombies: Coordinate[] = [];
     zombies.forEach(zombie => {
       let adjacents: Coordinate[] = [];
@@ -48,7 +49,7 @@ export function minutesUntilApocalypse(grid: number[][]): number {
       {
         adjacents.push({ col: zombie.col, row: zombie.row - 1});
       }
-      if (zombie.col < height - 1)
+      if (zombie.row < height - 1)
       {
         adjacents.push({ col: zombie.col, row: zombie.row + 1 });
       }
@@ -61,10 +62,12 @@ export function minutesUntilApocalypse(grid: number[][]): number {
       });
     });
     zombies.push(...newZombies);
-    ++time;
+    if (zombieAdded) {
+      ++time;
+    }
   } 
   while(zombieAdded);
-  // now let's check that all humans are dead
+  // now let's check that all humans are gone
    for(let row = 0; row < height; ++row) {
     for(let col = 0; col < width; ++col) {
       if (grid[row][col] === 1) {
