@@ -61,7 +61,7 @@ export function minutesUntilApocalypse(grid: number[][]): number {
         }
       });
     });
-    zombies.push(...newZombies);
+    zombies = newZombies;
     if (zombieAdded) {
       ++time;
     }
