@@ -1,27 +1,29 @@
+type Coordinate = {
+  row: number,
+  col: number
+};
+type Cell = 0 | 1 | 2;
+
 /**
  * Returns minimum number of minutes until no living people remain.
  * @param grid - grid representing a town.
  * @returns A number of minutes
  */
-export function minutesUntilApocalypse(grid: number[][]): number {
-  if (grid.length === 0 || grid[0]?.length === 0) {
+export function minutesUntilApocalypse(grid: Cell[][]): number {
+  const firstRow = grid[0];
+  if (grid.length === 0 || !firstRow || firstRow.length === 0) {
     throw new Error("invalid input");
   }
-  for(let i = 0; i < grid.length; ++i) {
-    if (!grid[i]) {
-      throw new Error("null array in grid");
-    }
-  }
-  let height = grid.length, width = grid[0].length;
+  let height = grid.length, width = firstRow.length;
   // first look if we have any zombies and save their coordinates.
-  type Coordinate = {
-    row: number,
-    col: number
-  };
   let zombies: Coordinate[] = [];
   for(let row = 0; row < height; ++row) {
+    const currentRow = grid[row];
+    if (!currentRow) {
+      throw new Error("null array in grid");
+    }
     for(let col = 0; col < width; ++col) {
-      if (grid[row][col] === 2) {
+      if (currentRow[col] === 2) {
         zombies.push({ row, col });
       }
     }
@@ -54,8 +56,12 @@ export function minutesUntilApocalypse(grid: number[][]): number {
         adjacents.push({ col: zombie.col, row: zombie.row + 1 });
       }
       adjacents.forEach(c => {
-        if (grid[c.row][c.col] === 1) {
-          grid[c.row][c.col] = 2;
+        const adjacentRow = grid[c.row];
+        if (!adjacentRow) {
+          throw new Error("null array in grid");
+        }
+        if (adjacentRow[c.col] === 1) {
+          adjacentRow[c.col] = 2;
           zombieAdded = true;
           newZombies.push(c);
         }
@@ -69,8 +75,12 @@ export function minutesUntilApocalypse(grid: number[][]): number {
   while(zombieAdded);
   // now let's check that all humans are gone
    for(let row = 0; row < height; ++row) {
+    const currentRow = grid[row];
+    if (!currentRow) {
+      throw new Error("null array in grid");
+    }
     for(let col = 0; col < width; ++col) {
-      if (grid[row][col] === 1) {
+      if (currentRow[col] === 1) {
         return -1;
       }
     }
