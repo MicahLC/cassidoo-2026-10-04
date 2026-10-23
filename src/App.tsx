@@ -1,10 +1,13 @@
 import { useState } from 'react';
 import { minutesUntilApocalypse } from './minutesUntilApocalypse.js';
+import { minutesUntilApocalypseGenerator } from './minutesUntilApocalypseGenerator.js';
 
 function App() {
-  const [grid, setGrid] = useState([[0]]);
-  const [dimensions, setDimensions] = useState({height: 1, width: 1});
+  const [grid, setGrid] = useState([[0,0], [0,0]]);
+  const [dimensions, setDimensions] = useState({height: 2, width: 2});
   const [minutes, setMinutes] = useState<number | null>(null);
+  const [stepSize, setStepSize] = useState(500);
+  // todo: add disable state to buttons while generator is running, and add a cancel button to stop the generator.
 
   const cycleFunc = (n: number) => (n+1) % 3;
 
@@ -25,9 +28,14 @@ function App() {
   return (
   <main className="min-h-screen">
     <label htmlFor="height">Height:</label>
-    <input id="height" type="number" value={dimensions.height} onChange={(e) => {
+    <input id="height" type="number" value={dimensions.height} min="1" max="25" onChange={(e) => {
       const height = parseInt(e.target.value);
       if (isNaN(height) || height < 1) return;
+      if(height > 25) {
+        alert("Height cannot be greater than 25");
+        e.target.value = "25";
+        return;
+      }
       setDimensions({ ...dimensions, height });
       const newGrid = [...grid];
       while (newGrid.length < height) {
@@ -40,9 +48,14 @@ function App() {
       setMinutes(null);
     }} />
     <label htmlFor="width">Width:</label>
-    <input id="width" type="number" value={dimensions.width} onChange={(e) => {
+    <input id="width" type="number" value={dimensions.width} min="1" max="25" onChange={(e) => {
       const width = parseInt(e.target.value);
       if (isNaN(width) || width < 1) return;
+      if(width > 25) {
+        alert("Width cannot be greater than 25");
+        e.target.value = "25";
+        return;
+      }
       setDimensions({ ...dimensions, width });
       const newGrid = [...grid];
       newGrid.forEach((row) => {
@@ -75,6 +88,32 @@ function App() {
       })}
     </table>
     <br/>
+    <input type="number" value={stepSize} onChange={(e) => {
+      const newStepSize = parseInt(e.target.value);
+      if (isNaN(newStepSize) || newStepSize < 1) return;
+      setStepSize(newStepSize);
+    }} />
+    <label htmlFor="stepSize">Step Size (ms)</label>
+    <br/>
+    <button className="bg-blue-400 hover:bg-blue-500 m-2 p-2 text-white" onClick={() => {
+      try {
+        const generator = minutesUntilApocalypseGenerator(grid);
+        const generatorStep = () => {
+          const result = generator.next();
+          setGrid([...grid]);
+          if (result.done) {
+            setMinutes(result.value);
+          } else {
+            setTimeout(generatorStep, stepSize);
+          }
+        }
+        generatorStep();
+      } catch (e) {
+        alert(e);
+      }
+    }}>
+      Calculate Minutes Until Apocalypse (generator)
+    </button>
     <button className="bg-blue-400 hover:bg-blue-500 m-2 p-2 text-white" onClick={() => {
       try {
         const minutes = minutesUntilApocalypse(grid);
@@ -83,7 +122,7 @@ function App() {
         alert(e);
       }
     }}>
-      Calculate Minutes Until Apocalypse
+      Calculate Minutes Until Apocalypse (no generator)
     </button>
     {minutes !== null && <div>Minutes until apocalypse: {minutes}</div>}
     <br />
