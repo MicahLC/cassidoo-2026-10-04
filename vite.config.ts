@@ -5,7 +5,7 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   build: {
-    outDir: "web-dist",
+    outDir: "dist",
   },
   base: '/cassidoo-2026-10-4/'
 });
