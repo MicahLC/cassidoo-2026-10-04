@@ -31,3 +31,7 @@ Once we've established that we have a valid grid, we go through it and find all 
 # React app
 
 Run `npm run dev` to start the empty React app. Tailwind CSS is included for styling. Use `npm run build:app` to create a production build in `web-dist`.
+
+## GitHub Pages
+
+Followed instructions at https://vite.dev/guide/static-deploy to deploy to GitHub Pages.

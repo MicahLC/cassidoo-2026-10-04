@@ -7,4 +7,5 @@ export default defineConfig({
   build: {
     outDir: "web-dist",
   },
+  base: '/cassidoo-2026-10-4/'
 });
