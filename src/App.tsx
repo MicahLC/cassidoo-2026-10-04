@@ -1,15 +1,14 @@
 import { useState } from 'react';
-import { minutesUntilApocalypse } from './minutesUntilApocalypse.js';
-import { minutesUntilApocalypseGenerator } from './minutesUntilApocalypseGenerator.js';
+import { Cell, minutesUntilApocalypseGenerator } from './minutesUntilApocalypseGenerator.js';
 
 function App() {
-  const [grid, setGrid] = useState([[0,0], [0,0]]);
+  const [grid, setGrid] = useState([[0,0], [0,0]] as Cell[][]);
   const [dimensions, setDimensions] = useState({height: 2, width: 2});
   const [minutes, setMinutes] = useState<number | null>(null);
   const [stepSize, setStepSize] = useState(500);
   // todo: add disable state to buttons while generator is running, and add a cancel button to stop the generator.
 
-  const cycleFunc = (n: number) => (n+1) % 3;
+  const cycleFunc = (n: Cell) => (n+1) % 3 as Cell;
 
   const onClickElement = (rowIdx: number, colIdx: number) => {
     return () => {
@@ -24,6 +23,14 @@ function App() {
       setGrid(copy);
     }
   };
+
+  const gridItemTransform = (item: Cell) => {
+    switch(item) {
+      case 2: return <img src="img/zombie.svg" width="32px" height="32px"></img>
+      case 1: return <img src="img/woman.svg" width="32px" height="32px"></img>;
+      case 0: return <img src="img/house.svg" width="32px" height="32px"></img>;
+    }
+  }
 
   return (
   <main className="min-h-screen">
@@ -71,7 +78,7 @@ function App() {
       setMinutes(null);
     }} />
     <button className="bg-green-300 hover:bg-green-400 m-2 p-2 text-blue-500" onClick={() => {
-      const newGrid = grid.map(row => row.map(() => 0));
+      const newGrid = grid.map(row => row.map(() => 0 as Cell));
       setGrid(newGrid);
       setMinutes(null);
     }}>
@@ -82,7 +89,11 @@ function App() {
       {grid.map((row, rowIndex) => { 
         return <tr key={rowIndex}>
           {row.map((item, colIndex) => {
-            return <td key={colIndex} className=""><button className="bg-green-300 hover:bg-green-400 m-2 p-2 text-blue-500" onClick={onClickElement(rowIndex, colIndex)}>{item}</button></td>;
+            return <td key={colIndex} className="">
+              <button className="bg-green-300 hover:bg-green-400 m-1 p-3 text-blue-500" onClick={onClickElement(rowIndex, colIndex)}>
+                {gridItemTransform(item)}
+              </button>
+              </td>;
           })}
         </tr> 
       })}
@@ -112,9 +123,9 @@ function App() {
         alert(e);
       }
     }}>
-      Calculate Minutes Until Apocalypse (generator)
+      Initiate Apocalypse Calculations
     </button>
-    <button className="bg-blue-400 hover:bg-blue-500 m-2 p-2 text-white" onClick={() => {
+    {/* <button className="bg-blue-400 hover:bg-blue-500 m-2 p-2 text-white" onClick={() => {
       try {
         const minutes = minutesUntilApocalypse(grid);
         setMinutes(minutes);
@@ -123,7 +134,7 @@ function App() {
       }
     }}>
       Calculate Minutes Until Apocalypse (no generator)
-    </button>
+    </button> */}
     {minutes !== null && <div>Minutes until apocalypse: {minutes}</div>}
     <br />
   </main>

@@ -2,7 +2,7 @@ type Coordinate = {
   row: number,
   col: number
 };
-type Cell = 0 | 1 | 2;
+export type Cell = 0 | 1 | 2;
 type Result = {
   grid: Cell[][],
   time: number
