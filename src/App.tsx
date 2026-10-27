@@ -33,7 +33,46 @@ function App() {
   }
 
   return (
-  <main className="min-h-screen">
+  <main className="min-h-screen bg-green-200">
+    <h1>Zombie Apocalypse!</h1>
+    <h2>Ahhhhhhhh</h2>
+    <h3>Directions: click an object to change it. Once they're set the way you want, click the "Initiate..." button to watch the zombies try to take over the town. Every minute, a zombie will turn every person adjacent to it into a zombie.</h3>
+    <div className="border-5 border-black">
+      <table className="inline-block p-4 bg-green-700">
+        {grid.map((row, rowIndex) => { 
+          return <tr key={rowIndex}>
+            {row.map((item, colIndex) => {
+              return <td key={colIndex} className="">
+                <button className="bg-green-300 hover:bg-green-400 m-1 p-1" onClick={onClickElement(rowIndex, colIndex)}>
+                  {gridItemTransform(item)}
+                </button>
+                </td>;
+            })}
+          </tr> 
+        })}
+      </table>
+      <br/>
+      <button className="bg-blue-400 hover:bg-blue-500 m-top-1 p-2 text-white" onClick={() => {
+        try {
+          const generator = minutesUntilApocalypseGenerator(grid);
+          const generatorStep = () => {
+            const result = generator.next();
+            setGrid([...grid]);
+            if (result.done) {
+              setMinutes(result.value);
+            } else {
+              setTimeout(generatorStep, stepSize);
+            }
+          }
+          generatorStep();
+        } catch (e) {
+          alert(e);
+        }
+      }}>
+        Initiate Apocalypse Calculations
+      </button>
+    </div>
+    <br/>
     <label htmlFor="height">Height:</label>
     <input id="height" type="number" value={dimensions.height} min="1" max="25" onChange={(e) => {
       const height = parseInt(e.target.value);
@@ -85,20 +124,6 @@ function App() {
       Clear Grid
     </button>
     <br/>
-    <table className="inline-block p-6 bg-green-700">
-      {grid.map((row, rowIndex) => { 
-        return <tr key={rowIndex}>
-          {row.map((item, colIndex) => {
-            return <td key={colIndex} className="">
-              <button className="bg-green-300 hover:bg-green-400 m-1 p-3 text-blue-500" onClick={onClickElement(rowIndex, colIndex)}>
-                {gridItemTransform(item)}
-              </button>
-              </td>;
-          })}
-        </tr> 
-      })}
-    </table>
-    <br/>
     <input type="number" value={stepSize} onChange={(e) => {
       const newStepSize = parseInt(e.target.value);
       if (isNaN(newStepSize) || newStepSize < 1) return;
@@ -106,35 +131,6 @@ function App() {
     }} />
     <label htmlFor="stepSize">Step Size (ms)</label>
     <br/>
-    <button className="bg-blue-400 hover:bg-blue-500 m-2 p-2 text-white" onClick={() => {
-      try {
-        const generator = minutesUntilApocalypseGenerator(grid);
-        const generatorStep = () => {
-          const result = generator.next();
-          setGrid([...grid]);
-          if (result.done) {
-            setMinutes(result.value);
-          } else {
-            setTimeout(generatorStep, stepSize);
-          }
-        }
-        generatorStep();
-      } catch (e) {
-        alert(e);
-      }
-    }}>
-      Initiate Apocalypse Calculations
-    </button>
-    {/* <button className="bg-blue-400 hover:bg-blue-500 m-2 p-2 text-white" onClick={() => {
-      try {
-        const minutes = minutesUntilApocalypse(grid);
-        setMinutes(minutes);
-      } catch (e) {
-        alert(e);
-      }
-    }}>
-      Calculate Minutes Until Apocalypse (no generator)
-    </button> */}
     {minutes !== null && <div>Minutes until apocalypse: {minutes}</div>}
     <br />
   </main>
