@@ -6,6 +6,7 @@ function App() {
   const [dimensions, setDimensions] = useState({height: 2, width: 2});
   const [minutes, setMinutes] = useState<number | null>(null);
   const [stepSize, setStepSize] = useState(500);
+  const [sizeError, setSizeError] = useState<string | null>(null);
   // todo: add disable state to buttons while generator is running, and add a cancel button to stop the generator.
 
   const cycleFunc = (n: Cell) => (n+1) % 3 as Cell;
@@ -34,11 +35,11 @@ function App() {
 
   return (
   <main className="min-h-screen bg-green-200">
-    <h1>Zombie Apocalypse!</h1>
-    <h2>Ahhhhhhhh</h2>
-    <h3>Directions: click an object to change it. Once they're set the way you want, click the "Initiate..." button to watch the zombies try to take over the town. Every minute, a zombie will turn every person adjacent to it into a zombie.</h3>
-    <div className="border-5 border-black">
-      <table className="inline-block p-4 bg-green-700">
+    <h1 className="text-3xl font-bold text-center">Zombie Apocalypse!</h1>
+    <h3 className="text-lg font-semibold text-center">Ahhhhhhhh</h3>
+    <h2><b>Directions:</b> click an object to change it. Once they're set the way you want, click the "Initiate..." button to watch the zombies try to take over the town. Every minute, a zombie will turn every person adjacent to it into a zombie.</h2>
+    <div className="border-5 border-black inline-grid grid-cols-1 justify-items-center">
+      <table className="inline-grid flex-none grow-0 items-start p-4 bg-green-700">
         {grid.map((row, rowIndex) => { 
           return <tr key={rowIndex}>
             {row.map((item, colIndex) => {
@@ -52,7 +53,8 @@ function App() {
         })}
       </table>
       <br/>
-      <button className="bg-blue-400 hover:bg-blue-500 m-top-1 p-2 text-white" onClick={() => {
+      <button className="bg-blue-400 hover:bg-blue-500 m-top-1 p-2 text-white justify-self-center
+" onClick={() => {
         try {
           const generator = minutesUntilApocalypseGenerator(grid);
           const generatorStep = () => {
