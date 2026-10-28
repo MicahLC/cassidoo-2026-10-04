@@ -22,6 +22,7 @@ function App() {
       updatedRow[colIdx] = cycleFunc(value);
       copy[rowIdx] = updatedRow;
       setGrid(copy);
+      setMinutes(null);
     }
   };
 
@@ -34,12 +35,58 @@ function App() {
   }
 
   return (
-  <main className="min-h-screen bg-green-200">
+  <main className="min-h-screen bg-green-200 text-center">
     <h1 className="text-3xl font-bold text-center">Zombie Apocalypse!</h1>
     <h3 className="text-lg font-semibold text-center">Ahhhhhhhh</h3>
-    <h2><b>Directions:</b> click an object to change it. Once they're set the way you want, click the "Initiate..." button to watch the zombies try to take over the town. Every minute, a zombie will turn every person adjacent to it into a zombie.</h2>
-    <div className="border-5 border-black inline-grid grid-cols-1 justify-items-center">
-      <table className="inline-grid flex-none grow-0 items-start p-4 bg-green-700">
+    <h2><b>Directions:</b> Click any square in the grid to change it. Once you're ready, click the "Run Simulation" button to watch the zombies try to take over the town. Every minute, a zombie will turn every person adjacent to it into a zombie. The simulation will run until the zombies can't turn any more humans.</h2>
+    <div>
+      <h3>Grid size controls</h3>
+      <label htmlFor="height">Height: </label>
+      <input id="height" type="number" value={dimensions.height} min="1" max="25" onChange={(e) => {
+        const height = parseInt(e.target.value);
+        if (isNaN(height) || height < 1) return;
+        if(height > 25) {
+          alert("Height cannot be greater than 25");
+          e.target.value = "25";
+          return;
+        }
+        setDimensions({ ...dimensions, height });
+        const newGrid = [...grid];
+        while (newGrid.length < height) {
+          newGrid.push(new Array(dimensions.width).fill(0));
+        }
+        while(newGrid.length > height) {
+          newGrid.pop();
+        }
+        setGrid(newGrid);
+        setMinutes(null);
+      }} />
+      <label htmlFor="width">Width: </label>
+      <input id="width" type="number" value={dimensions.width} min="1" max="25" onChange={(e) => {
+        const width = parseInt(e.target.value);
+        if (isNaN(width) || width < 1) return;
+        if(width > 25) {
+          alert("Width cannot be greater than 25");
+          e.target.value = "25";
+          return;
+        }
+        setDimensions({ ...dimensions, width });
+        const newGrid = [...grid];
+        newGrid.forEach((row) => {
+          if (dimensions.width > width) {
+            row.length = width;
+          } else {
+            while (row.length < width) {
+              row.push(0);
+            }
+          }
+        });
+        setGrid(newGrid);
+        setMinutes(null);
+      }} />
+    </div>
+    <div className="inline-grid grid-cols-1 justify-items-center p-2">
+      <table className="inline-grid p-4 bg-green-700">
         {grid.map((row, rowIndex) => { 
           return <tr key={rowIndex}>
             {row.map((item, colIndex) => {
@@ -71,53 +118,13 @@ function App() {
           alert(e);
         }
       }}>
-        Initiate Apocalypse Calculations
+        Run Simulation
       </button>
     </div>
     <br/>
-    <label htmlFor="height">Height:</label>
-    <input id="height" type="number" value={dimensions.height} min="1" max="25" onChange={(e) => {
-      const height = parseInt(e.target.value);
-      if (isNaN(height) || height < 1) return;
-      if(height > 25) {
-        alert("Height cannot be greater than 25");
-        e.target.value = "25";
-        return;
-      }
-      setDimensions({ ...dimensions, height });
-      const newGrid = [...grid];
-      while (newGrid.length < height) {
-        newGrid.push(new Array(dimensions.width).fill(0));
-      }
-      while(newGrid.length > height) {
-        newGrid.pop();
-      }
-      setGrid(newGrid);
-      setMinutes(null);
-    }} />
-    <label htmlFor="width">Width:</label>
-    <input id="width" type="number" value={dimensions.width} min="1" max="25" onChange={(e) => {
-      const width = parseInt(e.target.value);
-      if (isNaN(width) || width < 1) return;
-      if(width > 25) {
-        alert("Width cannot be greater than 25");
-        e.target.value = "25";
-        return;
-      }
-      setDimensions({ ...dimensions, width });
-      const newGrid = [...grid];
-      newGrid.forEach((row) => {
-        if (dimensions.width > width) {
-          row.length = width;
-        } else {
-          while (row.length < width) {
-            row.push(0);
-          }
-        }
-      });
-      setGrid(newGrid);
-      setMinutes(null);
-    }} />
+    {minutes !== null && ((minutes >= 0) ? 
+      <div>Minutes until apocalypse: {minutes}</div> : 
+      <div>The humans survive!</div>)}
     <button className="bg-green-300 hover:bg-green-400 m-2 p-2 text-blue-500" onClick={() => {
       const newGrid = grid.map(row => row.map(() => 0 as Cell));
       setGrid(newGrid);
@@ -133,8 +140,6 @@ function App() {
     }} />
     <label htmlFor="stepSize">Step Size (ms)</label>
     <br/>
-    {minutes !== null && <div>Minutes until apocalypse: {minutes}</div>}
-    <br />
   </main>
   );
 }
