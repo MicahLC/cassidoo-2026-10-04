@@ -6,7 +6,8 @@ function App() {
   const [dimensions, setDimensions] = useState({height: 2, width: 2});
   const [minutes, setMinutes] = useState<number | null>(null);
   const [stepSize, setStepSize] = useState(500);
-  // todo: add disable state to buttons while generator is running, and add a cancel button to stop the generator.
+  const [running, setRunning] = useState(false);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
 
   const cycleFunc = (n: Cell) => (n+1) % 3 as Cell;
 
@@ -38,11 +39,11 @@ function App() {
   <main className="min-h-screen bg-green-200 text-center">
     <h1 className="text-3xl font-bold text-center">Zombie Apocalypse!</h1>
     <h3 className="text-lg font-semibold text-center">Ahhhhhhhh</h3>
-    <h2><b>Directions:</b> Click any square in the grid to change it. Once you're ready, click the "Run Simulation" button to watch the zombies try to take over the town. Every minute, a zombie will turn every human adjacent to it into a zombie. The simulation will run until the zombies can't turn any more humans into zombies.</h2>
+    <h2><b>Directions:</b> Set the size of the grid. Click any icon in the grid to change it. Once you're ready, click the "Run Simulation" button to watch the zombies try to take over. Every minute, a zombie will turn every human adjacent to it into a zombie. The simulation will run until the zombies can't turn any more humans into zombies.</h2>
     <div className="mt-2">
       <h3>There's a max height and width of {maxSize}.</h3>
       <label htmlFor="height">Grid Height: </label>
-      <input id="height" type="number" inputMode="numeric" value={dimensions.height} min="1" max={maxSize} onChange={(e) => {
+      <input id="height" type="number" inputMode="numeric" value={dimensions.height} min="1" max={maxSize} disabled={running}onChange={(e) => {
         let height = parseInt(e.target.value);
         if (isNaN(height) || height < 1) return;
         if(height > maxSize) {
@@ -60,7 +61,7 @@ function App() {
         setMinutes(null);
       }} />
       <label htmlFor="width">Grid Width: </label>
-      <input id="width" type="number" inputMode="numeric" value={dimensions.width} min="1" max={maxSize} onChange={(e) => {
+      <input id="width" type="number" inputMode="numeric" value={dimensions.width} min="1" max={maxSize} disabled={running} onChange={(e) => {
         let width = parseInt(e.target.value);
         if (isNaN(width) || width < 1) return;
         if(width > maxSize) {
@@ -99,30 +100,38 @@ function App() {
       <br/>
       <button className="bg-blue-400 hover:bg-blue-500 m-top-1 p-2 text-white justify-self-center
 " onClick={() => {
-        try {
-          const generator = minutesUntilApocalypseGenerator(grid);
-          const generatorStep = () => {
-            const result = generator.next();
-            setGrid([...grid]);
-            if (result.done) {
-              setMinutes(result.value);
-            } else {
-              setTimeout(generatorStep, stepSize);
+        if (!running) {
+          setRunning(true);
+          try {
+            const generator = minutesUntilApocalypseGenerator(grid);
+            const generatorStep = () => {
+              const result = generator.next();
+              setGrid([...grid]);
+              if (result.done) {
+                setMinutes(result.value);
+                setRunning(false);
+              } else {
+                setTimeoutId(setTimeout(generatorStep, stepSize));
+              }
             }
+            generatorStep();
+          } catch (e) {
+            alert(e);
           }
-          generatorStep();
-        } catch (e) {
-          alert(e);
+        } else {
+          clearTimeout(timeoutId);
+          setTimeoutId(null);
+          setRunning(false);
         }
       }}>
-        Run Simulation
+        {!running ? "Run Simulation" : "Stop Simulation"}
       </button>
     </div>
     <br/>
     {minutes !== null && ((minutes >= 0) ? 
       <div>Minutes until apocalypse: {minutes}</div> : 
       <div>The humans survive!</div>)}
-    <button className="bg-green-300 hover:bg-green-400 m-2 p-2 text-blue-500" onClick={() => {
+    <button className="bg-green-300 hover:bg-green-400 m-2 p-2 text-blue-500" disabled={running} onClick={() => {
       const newGrid = grid.map(row => row.map(() => 0 as Cell));
       setGrid(newGrid);
       setMinutes(null);
