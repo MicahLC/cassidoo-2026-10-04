@@ -38,11 +38,10 @@ function App() {
   <main className="min-h-screen bg-green-200 text-center">
     <h1 className="text-3xl font-bold text-center">Zombie Apocalypse!</h1>
     <h3 className="text-lg font-semibold text-center">Ahhhhhhhh</h3>
-    <h2><b>Directions:</b> Click any square in the grid to change it. Once you're ready, click the "Run Simulation" button to watch the zombies try to take over the town. Every minute, a zombie will turn every person adjacent to it into a zombie. The simulation will run until the zombies can't turn any more humans.</h2>
-    <div>
-      <h3>Grid size controls</h3>
-      <label htmlFor="height">Height: </label>
-      <input id="height" type="number" value={dimensions.height} min="1" max="25" onChange={(e) => {
+    <h2><b>Directions:</b> Click any square in the grid to change it. Once you're ready, click the "Run Simulation" button to watch the zombies try to take over the town. Every minute, a zombie will turn every human adjacent to it into a zombie. The simulation will run until the zombies can't turn any more humans into zombies.</h2>
+    <div className="mt-2">
+      <label htmlFor="height">Grid Height: </label>
+      <input id="height" type="number" inputMode="numeric" value={dimensions.height} min="1" max="25" onChange={(e) => {
         const height = parseInt(e.target.value);
         if (isNaN(height) || height < 1) return;
         if(height > 25) {
@@ -61,8 +60,8 @@ function App() {
         setGrid(newGrid);
         setMinutes(null);
       }} />
-      <label htmlFor="width">Width: </label>
-      <input id="width" type="number" value={dimensions.width} min="1" max="25" onChange={(e) => {
+      <label htmlFor="width">Grid Width: </label>
+      <input id="width" type="number" inputMode="numeric" value={dimensions.width} min="1" max="25" onChange={(e) => {
         const width = parseInt(e.target.value);
         if (isNaN(width) || width < 1) return;
         if(width > 25) {
