@@ -6,7 +6,6 @@ function App() {
   const [dimensions, setDimensions] = useState({height: 2, width: 2});
   const [minutes, setMinutes] = useState<number | null>(null);
   const [stepSize, setStepSize] = useState(500);
-  const [sizeError, setSizeError] = useState<string | null>(null);
   // todo: add disable state to buttons while generator is running, and add a cancel button to stop the generator.
 
   const cycleFunc = (n: Cell) => (n+1) % 3 as Cell;
@@ -33,6 +32,7 @@ function App() {
       case 0: return <img src="img/house.svg" width="32px" height="32px"></img>;
     }
   }
+  const maxSize = 25;
 
   return (
   <main className="min-h-screen bg-green-200 text-center">
@@ -40,14 +40,13 @@ function App() {
     <h3 className="text-lg font-semibold text-center">Ahhhhhhhh</h3>
     <h2><b>Directions:</b> Click any square in the grid to change it. Once you're ready, click the "Run Simulation" button to watch the zombies try to take over the town. Every minute, a zombie will turn every human adjacent to it into a zombie. The simulation will run until the zombies can't turn any more humans into zombies.</h2>
     <div className="mt-2">
+      <h3>There's a max height and width of {maxSize}.</h3>
       <label htmlFor="height">Grid Height: </label>
-      <input id="height" type="number" inputMode="numeric" value={dimensions.height} min="1" max="25" onChange={(e) => {
-        const height = parseInt(e.target.value);
+      <input id="height" type="number" inputMode="numeric" value={dimensions.height} min="1" max={maxSize} onChange={(e) => {
+        let height = parseInt(e.target.value);
         if (isNaN(height) || height < 1) return;
-        if(height > 25) {
-          alert("Height cannot be greater than 25");
-          e.target.value = "25";
-          return;
+        if(height > maxSize) {
+          height = maxSize;
         }
         setDimensions({ ...dimensions, height });
         const newGrid = [...grid];
@@ -61,13 +60,12 @@ function App() {
         setMinutes(null);
       }} />
       <label htmlFor="width">Grid Width: </label>
-      <input id="width" type="number" inputMode="numeric" value={dimensions.width} min="1" max="25" onChange={(e) => {
-        const width = parseInt(e.target.value);
+      <input id="width" type="number" inputMode="numeric" value={dimensions.width} min="1" max={maxSize} onChange={(e) => {
+        let width = parseInt(e.target.value);
         if (isNaN(width) || width < 1) return;
-        if(width > 25) {
-          alert("Width cannot be greater than 25");
-          e.target.value = "25";
-          return;
+        if(width > maxSize) {
+          // alert("Width cannot be greater than 25");
+          width = maxSize;
         }
         setDimensions({ ...dimensions, width });
         const newGrid = [...grid];
@@ -132,9 +130,13 @@ function App() {
       Clear Grid
     </button>
     <br/>
-    <input type="number" value={stepSize} onChange={(e) => {
-      const newStepSize = parseInt(e.target.value);
+    <h3>Simulation parameters:</h3>
+    <input type="number" inputMode="numeric" min="1" max="2500" value={stepSize} onChange={(e) => {
+      let newStepSize = parseInt(e.target.value);
       if (isNaN(newStepSize) || newStepSize < 1) return;
+      if (newStepSize > 2500) {
+        newStepSize = 2500;
+      }
       setStepSize(newStepSize);
     }} />
     <label htmlFor="stepSize">Step Size (ms)</label>
