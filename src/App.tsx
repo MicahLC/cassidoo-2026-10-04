@@ -39,7 +39,7 @@ function App() {
   <main className="min-h-screen bg-green-200 text-center">
     <h1 className="text-3xl font-bold text-center">Zombie Apocalypse!</h1>
     <h3 className="text-lg font-semibold text-center">Ahhhhhhhh</h3>
-    <h2><b>Directions:</b> Set the size of the grid. Click any icon in the grid to change it. Once you're ready, click the "Run Simulation" button to watch the zombies try to take over. Every minute, a zombie will turn every human adjacent to it into a zombie. The simulation will run until the zombies can't turn any more humans into zombies.</h2>
+    <h2 className="max-w-160 m-auto"><b>Directions:</b> Set the size of the grid. Click any icon in the grid to change it. Once you're ready, click the "Run Simulation" button to watch the zombies try to take over. Every minute, a zombie will turn every human adjacent to it into a zombie. The simulation will run until the zombies can't turn any more humans into zombies.</h2>
     <div className="mt-2">
       <h3>There's a max height and width of {maxSize}.</h3>
       <label htmlFor="height">Grid Height: </label>
@@ -84,15 +84,15 @@ function App() {
       }} />
     </div>
     <div className="inline-grid grid-cols-1 justify-items-center p-2">
-      <table className="inline-grid p-4 bg-green-700">
+      <table className="inline-grid p-4 bg-sky-400">
         {grid.map((row, rowIndex) => { 
           return <tr key={rowIndex}>
             {row.map((item, colIndex) => {
               return <td key={colIndex} className="">
-                <button className="bg-green-300 hover:bg-green-400 m-1 p-1" onClick={onClickElement(rowIndex, colIndex)}>
+                <button className="bg-stone-500 hover:bg-green-500 m-1 p-1" onClick={onClickElement(rowIndex, colIndex)}>
                   {gridItemTransform(item)}
                 </button>
-                </td>;
+                </td>; 
             })}
           </tr> 
         })}
